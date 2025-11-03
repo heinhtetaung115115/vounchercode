@@ -31,6 +31,7 @@ h1,h2 {
 
 /* Code box */
 .code-box {
+    flex-direction: column;
   margin-bottom: 25px;
   padding: 15px 25px;
   border-radius: 15px;
