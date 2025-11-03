@@ -10,9 +10,12 @@
 
 <h1>Micky Vouncher Code</h1>
 
-<!-- Code display -->
+<!-- Label above code box -->
+<div id="codeLabel" class="code-label">Click a button to get your code</div>
+
+<!-- Code box with copy button -->
 <div id="voucherDisplay" class="code-box">
-  <span id="codeText">Click a button to get your code</span>
+  <span id="codeText"></span>
   <button id="copyBtn">Copy</button>
 </div>
 
@@ -25,7 +28,7 @@
   <button id="btn480">Get 8 Hours Code</button>
   <button id="btnUpload">⬆️ Upload Codes</button>
 </div>
-<h2>Made by Hein Htet Aung</h2>
+<h2>Made by hha</h2>
 <!-- Floating Upload Modal -->
 <div id="uploadModal" class="modal">
   <div class="modal-content">
@@ -61,9 +64,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Get code function
+// Get code function with duration label
 window.getCode = async function(type) {
   const display = document.getElementById("codeText");
+  const label = document.getElementById("codeLabel");
   const docRef = doc(db, "vouchers", type);
   const docSnap = await getDoc(docRef);
 
@@ -72,19 +76,32 @@ window.getCode = async function(type) {
     if (codes.length > 0) {
       const code = codes.shift();
       await updateDoc(docRef, { codes });
-      display.textContent = code;
+
+      let durationText = "";
+      switch(type) {
+        case "30min": durationText = "30 min"; break;
+        case "60min": durationText = "1 hr"; break;
+        case "90min": durationText = "1 hr 30 min"; break;
+        case "180min": durationText = "3 hr"; break;
+        case "480min": durationText = "8 hr"; break;
+      }
+
+      label.textContent = `Voucher code for ${durationText}:`;
+      display.textContent = code;  // Only the code
     } else {
+      label.textContent = "";
       display.textContent = "No codes left for this duration!";
     }
   } else {
+    label.textContent = "";
     display.textContent = "Voucher type not found!";
   }
 }
 
-// Copy code
+// Copy code only
 window.copyCode = function() {
   const code = document.getElementById("codeText").textContent;
-  if(code && code !== "Click a button to get your code" && code !== "No codes left for this duration!" && code !== "Voucher type not found!") {
+  if(code) {
     navigator.clipboard.writeText(code);
     alert("✅ Code copied to clipboard!");
   }
