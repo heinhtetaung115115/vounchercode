@@ -1,144 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Voucher Generator</title>
-<link rel="stylesheet" href="app.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voucher Generator</title>
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
 
-<h1>Micky Vouncher Code</h1>
+  <h1>Micky Voucher Code</h1>
 
-<!-- Label above code box -->
-<div id="codeLabel" class="code-label">Click a button to get your code</div>
+  <!-- Label above code box -->
+  <div id="codeLabel" class="code-label">Click a button to get your code</div>
 
-<!-- Code box with copy button -->
-<div id="voucherDisplay" class="code-box">
-  <span id="codeText"></span>
-  <button id="copyBtn">Copy</button>
-</div>
-
-<!-- Buttons -->
-<div>
-  <button id="btn30">Get 30 Minutes Code</button>
-  <button id="btn60">Get 1 Hour Code</button>
-  <button id="btn90">Get 1 Hour 30 Minutes Code</button>
-  <button id="btn180">Get 3 Hours Code</button>
-  <button id="btn480">Get 8 Hours Code</button>
-  <button id="btnUpload">⬆️ Upload Codes</button>
-</div>
-<h2>Made by hha</h2>
-<!-- Floating Upload Modal -->
-<div id="uploadModal" class="modal">
-  <div class="modal-content">
-    <h3>Upload Voucher Codes</h3>
-    <label for="voucherType">Select voucher type:</label>
-    <select id="voucherType">
-      <option value="30min">30 Minutes</option>
-      <option value="60min">1 Hour</option>
-      <option value="90min">1 Hour 30 Minutes</option>
-      <option value="180min">3 Hours</option>
-      <option value="480min">8 Hours</option>
-    </select>
-    <textarea id="codesInput" placeholder="Paste codes separated by commas"></textarea>
-    <button id="modalUploadBtn">Upload</button>
-    <button id="modalCancelBtn">Cancel</button>
+  <!-- Code box with copy button -->
+  <div id="voucherDisplay" class="code-box">
+    <span id="codeText"></span>
+    <button id="copyBtn">Copy</button>
   </div>
-</div>
 
-<!-- Firebase & JS -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+  <!-- Buttons -->
+  <div class="button-group">
+    <button id="btn30">Get 30 Minutes Code</button>
+    <button id="btn60">Get 1 Hour Code</button>
+    <button id="btn90">Get 1 Hour 30 Minutes Code</button>
+    <button id="btn180">Get 3 Hours Code</button>
+    <button id="btn480">Get 8 Hours Code</button>
+    <button id="btn1month">Get 1 Month Code</button>
+    <button id="btnUpload">⬆️ Upload Codes</button>
+  </div>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDz-PhaalR44P7-_Dq7qji4rnGoepXBIyM",
-  authDomain: "code-by-hha.firebaseapp.com",
-  projectId: "code-by-hha",
-  storageBucket: "code-by-hha.firebasestorage.app",
-  messagingSenderId: "432032886092",
-  appId: "1:432032886092:web:6344a5a050735e8a8033e9"
-};
+  <h2>Made by hha</h2>
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  <!-- Floating Upload Modal -->
+  <div id="uploadModal" class="modal">
+    <div class="modal-content">
+      <h3>Upload Voucher Codes</h3>
+      <label for="voucherType">Select voucher type:</label>
+      <select id="voucherType">
+        <option value="30min">30 Minutes</option>
+        <option value="60min">1 Hour</option>
+        <option value="90min">1 Hour 30 Minutes</option>
+        <option value="180min">3 Hours</option>
+        <option value="480min">8 Hours</option>
+        <option value="1month">1 Month</option>
+      </select>
+      <textarea id="codesInput" placeholder="Paste codes separated by commas"></textarea>
+      <button id="modalUploadBtn">Upload</button>
+      <button id="modalCancelBtn">Cancel</button>
+    </div>
+  </div>
 
-// Get code function with duration label
-window.getCode = async function(type) {
-  const display = document.getElementById("codeText");
-  const label = document.getElementById("codeLabel");
-  const docRef = doc(db, "vouchers", type);
-  const docSnap = await getDoc(docRef);
+  <!-- Firebase & JS -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-  if (docSnap.exists()) {
-    let codes = docSnap.data().codes || [];
-    if (codes.length > 0) {
-      const code = codes.shift();
-      await updateDoc(docRef, { codes });
+    const firebaseConfig = {
+      apiKey: "AIzaSyDz-PhaalR44P7-_Dq7qji4rnGoepXBIyM",
+      authDomain: "code-by-hha.firebaseapp.com",
+      projectId: "code-by-hha",
+      storageBucket: "code-by-hha.firebasestorage.app",
+      messagingSenderId: "432032886092",
+      appId: "1:432032886092:web:6344a5a050735e8a8033e9"
+    };
 
-      let durationText = "";
-      switch(type) {
-        case "30min": durationText = "30 min"; break;
-        case "60min": durationText = "1 hr"; break;
-        case "90min": durationText = "1 hr 30 min"; break;
-        case "180min": durationText = "3 hr"; break;
-        case "480min": durationText = "8 hr"; break;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Get code function with duration label
+    window.getCode = async function(type) {
+      const display = document.getElementById("codeText");
+      const label = document.getElementById("codeLabel");
+      const docRef = doc(db, "vouchers", type);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        let codes = docSnap.data().codes || [];
+        if (codes.length > 0) {
+          const code = codes.shift();
+          await updateDoc(docRef, { codes });
+
+          let durationText = "";
+          switch(type) {
+            case "30min": durationText = "30 min"; break;
+            case "60min": durationText = "1 hr"; break;
+            case "90min": durationText = "1 hr 30 min"; break;
+            case "180min": durationText = "3 hr"; break;
+            case "480min": durationText = "8 hr"; break;
+            case "1month": durationText = "1 month"; break;
+          }
+
+          label.textContent = `Voucher code for ${durationText}:`;
+          display.textContent = code;  // Only the code
+        } else {
+          label.textContent = "";
+          display.textContent = "No codes left for this duration!";
+        }
+      } else {
+        label.textContent = "";
+        display.textContent = "Voucher type not found!";
       }
-
-      label.textContent = `Voucher code for ${durationText}:`;
-      display.textContent = code;  // Only the code
-    } else {
-      label.textContent = "";
-      display.textContent = "No codes left for this duration!";
     }
-  } else {
-    label.textContent = "";
-    display.textContent = "Voucher type not found!";
-  }
-}
 
-// Copy code only
-window.copyCode = function() {
-  const code = document.getElementById("codeText").textContent;
-  if(code) {
-    navigator.clipboard.writeText(code);
-    alert("✅ Code copied to clipboard!");
-  }
-}
+    // Copy code only
+    window.copyCode = function() {
+      const code = document.getElementById("codeText").textContent;
+      if(code) {
+        navigator.clipboard.writeText(code);
+        alert("✅ Code copied to clipboard!");
+      }
+    }
 
-// Modal functions
-window.showUploadModal = function() {
-  document.getElementById("uploadModal").style.display = "flex";
-}
+    // Modal functions
+    window.showUploadModal = function() {
+      document.getElementById("uploadModal").style.display = "flex";
+    }
 
-window.closeUploadModal = function() {
-  document.getElementById("uploadModal").style.display = "none";
-}
+    window.closeUploadModal = function() {
+      document.getElementById("uploadModal").style.display = "none";
+    }
 
-// Event listeners
-document.getElementById("btn30").addEventListener("click", () => getCode('30min'));
-document.getElementById("btn60").addEventListener("click", () => getCode('60min'));
-document.getElementById("btn90").addEventListener("click", () => getCode('90min'));
-document.getElementById("btn180").addEventListener("click", () => getCode('180min'));
-document.getElementById("btn480").addEventListener("click", () => getCode('480min'));
-document.getElementById("copyBtn").addEventListener("click", copyCode);
-document.getElementById("btnUpload").addEventListener("click", showUploadModal);
-document.getElementById("modalCancelBtn").addEventListener("click", closeUploadModal);
+    // Event listeners
+    document.getElementById("btn30").addEventListener("click", () => getCode('30min'));
+    document.getElementById("btn60").addEventListener("click", () => getCode('60min'));
+    document.getElementById("btn90").addEventListener("click", () => getCode('90min'));
+    document.getElementById("btn180").addEventListener("click", () => getCode('180min'));
+    document.getElementById("btn480").addEventListener("click", () => getCode('480min'));
+    document.getElementById("btn1month").addEventListener("click", () => getCode('1month'));
+    document.getElementById("copyBtn").addEventListener("click", copyCode);
+    document.getElementById("btnUpload").addEventListener("click", showUploadModal);
+    document.getElementById("modalCancelBtn").addEventListener("click", closeUploadModal);
 
-document.getElementById("modalUploadBtn").addEventListener("click", async () => {
-  const input = document.getElementById("codesInput").value;
-  if(!input.trim()) return alert("Please enter at least one code.");
+    document.getElementById("modalUploadBtn").addEventListener("click", async () => {
+      const input = document.getElementById("codesInput").value;
+      if(!input.trim()) return alert("Please enter at least one code.");
 
-  const codesArray = input.split(",").map(s => s.trim()).filter(s => s);
-  const type = document.getElementById("voucherType").value;
+      const codesArray = input.split(",").map(s => s.trim()).filter(s => s);
+      const type = document.getElementById("voucherType").value;
 
-  await setDoc(doc(db, "vouchers", type), { codes: codesArray });
-  alert(`✅ ${codesArray.length} codes uploaded to ${type}!`);
-  closeUploadModal();
-  document.getElementById("codesInput").value = "";
-});
-</script>
+      await setDoc(doc(db, "vouchers", type), { codes: codesArray });
+      alert(`✅ ${codesArray.length} codes uploaded to ${type}!`);
+      closeUploadModal();
+      document.getElementById("codesInput").value = "";
+    });
+  </script>
 
 </body>
 </html>
